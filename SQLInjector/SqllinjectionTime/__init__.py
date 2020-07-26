@@ -180,16 +180,16 @@ class TimeInjector:
         else:
             return
 
+    def get_table_elem_nums(self):
+        pass
+
+    def get_table_elem_lens(self):
+        pass
+
+    def get_table_elems(self):
+        pass
 
 
-
-
-
-
-
-
-if __name__ == '__main__':
-    pass
 
 
 

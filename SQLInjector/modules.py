@@ -65,4 +65,3 @@ class Injector:
 
 if __name__ == '__main__':
     a = Injector()
-cookie = '{"security_level":"0","PHPSESSID":"2t22pohd3u6kf8n4i6obhscqt3"}'
